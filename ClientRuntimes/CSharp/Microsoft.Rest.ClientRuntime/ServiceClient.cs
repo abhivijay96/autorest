@@ -207,8 +207,36 @@ namespace Microsoft.Rest
             FirstMessageHandler = currentHandler;
             HttpClient = newClient;
             Type type = this.GetType();
-            HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(type.FullName,
+            //setting userAgent here is removed because the user can now use the method SetUserAgent to set this 
+           // HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(type.FullName , GetClientVersion()));
+        }
+        
+        
+        //A method to add UserAgent to the HttpClient object which can be used by all the classes inheriting this
+        public bool SetUserAgent(string productName)
+        {
+            if(!_disposed)
+            {
+                HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(productName,
                 GetClientVersion()));
+                //returns true if the userAgent was set
+                return true;
+            }
+            //returns false if the client was disposed before the useragent was set
+            return false;
+        }
+        
+        //Another method to set UserAgent to the HttpClient object , incase if the user wants to specify the version too
+        public bool SetUserAgent(string productName,string version)
+        {
+            if(!_disposed)
+            {
+                HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(productName,version));
+                //returns true if the userAgent was set
+                return true;
+            }
+            //returns false if the client was disposed before the useragent was set
+            return false;
         }
 
         /// <summary>
